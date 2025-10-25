@@ -2,9 +2,9 @@
 
 struct Node
 {
-    void (*handler)(const std::string);
+    void (*handler)(const std::string&);
     Node* next;
-    Node(void(*value)(const std::string)) : handler(value), next(nullptr) {};
+    Node(void(*value)(const std::string&)) : handler(value), next(nullptr) {};
 };
 struct EventSystem
 {
@@ -13,7 +13,7 @@ struct EventSystem
     EventSystem() : head(nullptr), tail(nullptr) {};
 };
 
-void RegisterHandler(EventSystem &system, void(*handler)(std::string))
+void RegisterHandler(EventSystem &system, void(*handler)(const std::string&))
 {
     Node* newNode = new Node(handler);
     if (system.head != nullptr)
@@ -28,13 +28,13 @@ void RegisterHandler(EventSystem &system, void(*handler)(std::string))
     }
 }
 
-void TriggerEvent(const EventSystem &system, const std::string &args)
+void TriggerEvent(const EventSystem &system, const std::string& args)
 {
     if (system.head != nullptr)
     {
         Node* currentNode = system.tail;
         while (currentNode != nullptr)
-        {;
+        {
             currentNode->handler(args);
             currentNode = currentNode->next;
         }
@@ -61,11 +61,12 @@ void Handler(const std::string& message)
 int main()
 {
     EventSystem system;
-    RegisterHandler(system, (void (*)(std::string))OnUserLogin);
-    RegisterHandler(system, (void (*)(std::string))OnUserLogout);
-    RegisterHandler(system, (void (*)(std::string))OnError);
-    RegisterHandler(system, (void (*)(std::string))Handler);
+    RegisterHandler(system, OnUserLogin);
+    RegisterHandler(system, OnUserLogout);
+    RegisterHandler(system, OnError);
+    RegisterHandler(system, Handler);
 
     TriggerEvent(system, "useeeer");
+
     return 0;
 }
